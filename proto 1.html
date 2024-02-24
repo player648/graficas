@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Gráficas de Física</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <label for="aceleracionInput">Aceleración (m/s²):</label>
+    <input type="number" id="aceleracionInput" name="aceleracionInput" value="10">
+    <label for="velocidadInicialInput">Velocidad Inicial (m/s):</label>
+    <input type="number" id="velocidadInicialInput" name="velocidadInicialInput" value="0">
+    <label for="velocidadFinalInput">Velocidad Final (m/s):</label>
+    <input type="number" id="velocidadFinalInput" name="velocidadFinalInput" value="10">
+    <label for="tiempoInput">Tiempo (s):</label>
+    <input type="number" id="tiempoInput" name="tiempoInput" value="10">
+    <button onclick="updateData()">Actualizar datos</button>
+
+    <canvas id="aceleracion"></canvas>
+    <canvas id="velocidad"></canvas>
+    <canvas id="distancia"></canvas>
+
+    <script>
+        // Tus datos aquí
+        var tiempo1 = Array.from({length: 100}, (_, i) => i / parseFloat(document.getElementById('tiempoInput').value));
+        var aceleracion1 = tiempo1.map(function() { return parseFloat(document.getElementById('aceleracionInput').value); });
+        var velocidadInicial = parseFloat(document.getElementById('velocidadInicialInput').value);
+        var velocidadFinal = parseFloat(document.getElementById('velocidadFinalInput').value);
+        var velocidad1 = tiempo1.map(function(t) { return velocidadInicial + aceleracion1[0] * t; });
+        var distancia1 = tiempo1.map(function(t) { return velocidadInicial * t + 0.5 * aceleracion1[0] * t * t; });
+
+        var ctx1 = document.getElementById('aceleracion').getContext('2d');
+        var ctx2 = document.getElementById('velocidad').getContext('2d');
+        var ctx3 = document.getElementById('distancia').getContext('2d');
+
+        var chart1 = new Chart(ctx1, {
+            type: 'line',
+            data: {
+                labels: tiempo1,
+                datasets: [{
+                    label: 'Aceleración (m/s²)',
+                    data: aceleracion1,
+                    fill: false,
+                    borderColor: 'rgb(75, 192, 192)',
+                    tension: 0.1
+                }]
+            }
+        });
+
+        var chart2 = new Chart(ctx2, {
+            type: 'line',
+            data: {
+                labels: tiempo1,
+                datasets: [{
+                    label: 'Velocidad (m/s)',
+                    data: velocidad1,
+                    fill: false,
+                    borderColor: 'rgb(75, 192, 192)',
+                    tension: 0.1
+                }]
+            }
+        });
+
+        var chart3 = new Chart(ctx3, {
+            type: 'line',
+            data: {
+                labels: tiempo1,
+                datasets: [{
+                    label: 'Distancia (m)',
+                    data: distancia1,
+                    fill: false,
+                    borderColor: 'rgb(75, 192, 192)',
+                    tension: 0.1
+                }]
+            }
+        });
+
+        function updateData() {
+            var newAceleracion = parseFloat(document.getElementById('aceleracionInput').value);
+            var newVelocidadInicial = parseFloat(document.getElementById('velocidadInicialInput').value);
+            var newVelocidadFinal = parseFloat(document.getElementById('velocidadFinalInput').value);
+            var newTiempo = parseFloat(document.getElementById('tiempoInput').value);
+
+            tiempo1 = Array.from({length: 100}, (_, i) => i / newTiempo);
+            aceleracion1 = tiempo1.map(function() { return newAceleracion; });
+            velocidad1 = tiempo1.map(function(t) { return newVelocidadInicial + newAceleracion * t; });
+            distancia1 = tiempo1.map(function(t) { return newVelocidadInicial * t + 0.5 * newAceleracion * t * t; });
+
+            chart1.data.labels = tiempo1;
+            chart1.data.datasets[0].data = aceleracion1;
+            chart1.update();
+
+            chart2.data.labels = tiempo1;
+            chart2.data.datasets[0].data = velocidad1;
+            chart2.update();
+
+            chart3.data.labels = tiempo1;
+            chart3.data.datasets[0].data = distancia1;
+            chart3.update();
+        }
+    </script>
+</body>
+</html>
